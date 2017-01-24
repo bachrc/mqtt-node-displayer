@@ -1,0 +1,29 @@
+{
+  "name": "ReduxRouterMQTT",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.8.5",
+	"babel-cli": "latest"
+  },
+  "dependencies": {
+    "duration-js": "^3.9.2",
+    "mqtt": "^2.2.0",
+    "react": "^15.4.1",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.1",
+    "react-redux": "latest",
+    "react-router": "latest",
+    "redux": "latest",
+    "redux-thunk": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  }
+}
