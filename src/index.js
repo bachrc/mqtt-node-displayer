@@ -5,8 +5,11 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk';
 import sensorsApp  from './modules/Redux/reducers'
-import App from './modules/App'
+import AppStatic from './modules-api/App'
+import AppWebsocket from './modules/App'
+import App from './App'
 import Home from './modules/components/Home'
+import HomePage from './HomePage'
 import Sensor from './modules/components/Sensor'
 
 let store = createStore(
@@ -19,10 +22,14 @@ ReactDOM.render((
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path="/" component={App}>
-                <Route path="/sensor">
-                    <IndexRoute component={Home}/>
-                    <Route path="/sensor/:id" component={Sensor}/>
+                <IndexRoute component={HomePage}/>
+                <Route path="/websocket" component={AppWebsocket}>
+                    <Route path="/websocket/sensor">
+                        <IndexRoute component={Home}/>
+                        <Route path="/websocket/sensor/:id" component={Sensor}/>
+                    </Route>
                 </Route>
+                <Route path="/static" component={AppStatic}/>
             </Route>
         </Router>
     </Provider>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router'
+import {LinkContainer} from 'react-router-bootstrap'
 import {connect} from 'react-redux'
 import {ListGroup, ListGroupItem, Badge} from 'react-bootstrap'
 import '../../App.css';
@@ -15,14 +15,14 @@ class SensorList extends React.Component {
         return (
             <ListGroup>
                 {Object.keys(this.props.sensors).map(key =>
-                    <ListGroupItem key={key}>
-                        <Link to={"/sensor/" + key}>
+                    <LinkContainer to={"/websocket/sensor/" + key}>
+                        <ListGroupItem key={key}>
                             {key}
                             <Badge pullRight={true}>
                                 {this.props.sensors[key].length}
                             </Badge>
-                        </Link>
-                    </ListGroupItem>
+                        </ListGroupItem>
+                    </LinkContainer>
                 )}
             </ListGroup>
         );

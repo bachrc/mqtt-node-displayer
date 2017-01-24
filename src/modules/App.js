@@ -5,9 +5,9 @@ import brokerclient from './api/MqttClient';
 import { addSensor, setConnected } from './Redux/actions'
 import '../App.css';
 import { connect } from "react-redux";
-import { Grid, Row, Col, Jumbotron } from "react-bootstrap"
+import { Row, Col, Jumbotron} from "react-bootstrap"
 
-class App extends React.Component {
+class AppWebsocket extends React.Component {
     constructor(props) {
         super(props);
 
@@ -18,7 +18,7 @@ class App extends React.Component {
 
     render() {
         return (
-            <Grid>
+            <div>
                 <Jumbotron>
                     <BrokerBar/>
                 </Jumbotron>
@@ -30,7 +30,7 @@ class App extends React.Component {
                         {this.props.children}
                     </Col>
                 </Row>
-            </Grid>
+            </div>
         );
     }
 }
@@ -56,4 +56,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(AppWebsocket);
