@@ -6,7 +6,9 @@ class Sensor extends React.Component {
         super(props);
 
         this.state = {
-            sensors : {}
+            sensors : {},
+            nameInputState : null,
+            locationInputState : null
         };
 
         this.nameInput = {
@@ -16,7 +18,6 @@ class Sensor extends React.Component {
         this.locationInput = {
             value : ""
         };
-
 
         this.getInfos = this.getInfos.bind(this);
         this.updateName = this.updateName.bind(this);
@@ -48,10 +49,8 @@ class Sensor extends React.Component {
                     this.setState({
                         sensors: {
                             [key]: json
-                        }
+                        },
                     });
-                    console.log("Dessert1\n" + JSON.stringify(json, null, 4));
-                    console.log("Dessert2\n" + JSON.stringify(this.state.sensors[key], null, 4));
                 } else if (json.errorCode) {
                     // Traitement si erreur
                     console.log("Erreur.")
@@ -78,16 +77,16 @@ class Sensor extends React.Component {
             })
             .then((response) => {
                 let json = JSON.parse(response);
-                console.log("Le dessert : " + response)
                 if(json.success) {
                     console.log("Bien maj.");
-                    // TODO Marquer le succes
+                    this.setState({nameInputState : "success"})
                 } else {
-                    // TODO Marquer l'échec
+                    this.setState({nameInputState : "error"})
                 }
             }).catch((error) => {
                 console.log("Erreur de requête : " + error)
-        });
+                this.setState({nameInputState : "error"})
+            });
     }
 
     updateLocation(e) {
@@ -108,16 +107,22 @@ class Sensor extends React.Component {
                 let json = JSON.parse(response);
                 if(json.success) {
                     console.log("Bien maj.");
-                    // TODO Marquer le succes
+                    this.setState({locationInputState : "success"})
                 } else {
-                    // TODO Marquer l'échec
+                    this.setState({locationInputState : "error"})
                 }
             }).catch((error) => {
             console.log("Erreur de requête : " + error)
+            this.setState({locationInputState : "error"})
         });
     }
 
+    // Fonction appelée lors d'un changement de capteur
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            nameInputState : null,
+            locationInputState : null
+        });
         this.getInfos(nextProps.params.id)
     }
 
@@ -160,7 +165,7 @@ class Sensor extends React.Component {
                                 </Col>
                                 <Col md={9}>
                                     <form onSubmit={this.updateName}>
-                                        <FormGroup>
+                                        <FormGroup validationState={this.state.nameInputState}>
                                             <FormControl type="text"
                                                          inputRef={(node) => {this.nameInput = node}}
                                                          defaultValue={sensorName} />
@@ -174,7 +179,7 @@ class Sensor extends React.Component {
                                 </Col>
                                 <Col md={9}>
                                     <form onSubmit={this.updateLocation}>
-                                        <FormGroup>
+                                        <FormGroup validationState={this.state.locationInputState}>
                                             <FormControl type="text"
                                                          inputRef={(node) => {this.locationInput = node}}
                                                          defaultValue={sensorLocation} />
@@ -184,7 +189,7 @@ class Sensor extends React.Component {
                             </Row>
                             <Accordion>
                                 {measures.map((measure) => {
-                                    return <Panel header={new Date(Date.parse(measure.date)).toLocaleString()} eventKey={measure._id}>
+                                    return <Panel header={new Date(Date.parse(measure.date)).toLocaleString()} key={measure._id} eventKey={"ev" + measure._id}>
                                         Valeur : {measure.value}
                                     </Panel>
                                 })}
