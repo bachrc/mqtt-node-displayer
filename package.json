@@ -8,9 +8,12 @@
   },
   "dependencies": {
     "duration-js": "^3.9.2",
+    "moment": "^2.17.1",
     "mqtt": "^2.2.0",
     "react": "^15.4.1",
     "react-bootstrap": "^0.30.7",
+    "react-datetime": "^2.8.4",
+    "react-datetimepicker-bootstrap": "^1.1.2",
     "react-dom": "^15.4.1",
     "react-redux": "latest",
     "react-router": "latest",

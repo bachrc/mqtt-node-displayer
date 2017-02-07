@@ -1,5 +1,6 @@
 import React from 'react';
-import {Row, Col, Panel, FormGroup, FormControl, Accordion} from 'react-bootstrap'
+import {Row, Col, Panel, FormGroup, FormControl, ListGroup, ListGroupItem, Button} from 'react-bootstrap'
+import DateTimePicker from 'react-datetimepicker-bootstrap'
 
 class Sensor extends React.Component {
     constructor(props) {
@@ -8,7 +9,9 @@ class Sensor extends React.Component {
         this.state = {
             sensors : {},
             nameInputState : null,
-            locationInputState : null
+            locationInputState : null,
+            beginDate : null,
+            endDate : null
         };
 
         this.nameInput = {
@@ -29,8 +32,17 @@ class Sensor extends React.Component {
 
     getInfos(key = this.props.params.id) {
         let myHeaders = new Headers();
-        console.log(key);
-        fetch("http://localhost:8008/v1/sensors/" + encodeURIComponent(key),
+
+        let url = "http://localhost:8008/v1/sensors/" + encodeURIComponent(key) + "?limit=10";
+        if(this.state.beginDate)
+            url += "&after=" + encodeURIComponent(this.state.beginDate);
+
+        if(this.state.endDate)
+            url += "&before=" + encodeURIComponent(this.state.endDate);
+
+        console.log(url);
+
+        fetch(url,
             {   method: 'GET',
                 mode: 'cors',
                 headers: myHeaders,
@@ -53,7 +65,7 @@ class Sensor extends React.Component {
                     });
                 } else if (json.errorCode) {
                     // Traitement si erreur
-                    console.log("Erreur.")
+                    console.log("Erreur : " + json.message)
                 }
 
             }).catch((error) => {
@@ -121,9 +133,13 @@ class Sensor extends React.Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             nameInputState : null,
-            locationInputState : null
+            locationInputState : null,
+            beginDate: null,
+            endDate: null
         });
-        this.getInfos(nextProps.params.id)
+        document.getElementById("start").value = "";
+        document.getElementById("end").value = "";
+        this.getInfos(nextProps.params.id);
     }
 
     render() {
@@ -144,26 +160,26 @@ class Sensor extends React.Component {
                     <Col md={12}>
                         <Panel>
                             <Row>
-                                <Col md={3}>
+                                <Col md={2}>
                                     <h5>ID Capteur</h5>
                                 </Col>
-                                <Col md={9}>
+                                <Col md={10}>
                                     {sensorID}
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md={3}>
+                                <Col md={2}>
                                     <h5>Type</h5>
                                 </Col>
-                                <Col md={9}>
+                                <Col md={10}>
                                     {sensorType}
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md={3}>
+                                <Col md={2}>
                                     <h5>Nom</h5>
                                 </Col>
-                                <Col md={9}>
+                                <Col md={10}>
                                     <form onSubmit={this.updateName}>
                                         <FormGroup validationState={this.state.nameInputState}>
                                             <FormControl type="text"
@@ -174,10 +190,10 @@ class Sensor extends React.Component {
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md={3}>
+                                <Col md={2}>
                                     <h5>Localisation</h5>
                                 </Col>
-                                <Col md={9}>
+                                <Col md={10}>
                                     <form onSubmit={this.updateLocation}>
                                         <FormGroup validationState={this.state.locationInputState}>
                                             <FormControl type="text"
@@ -187,13 +203,35 @@ class Sensor extends React.Component {
                                     </form>
                                 </Col>
                             </Row>
-                            <Accordion>
-                                {measures.map((measure) => {
-                                    return <Panel header={new Date(Date.parse(measure.date)).toLocaleString()} key={measure._id} eventKey={"ev" + measure._id}>
-                                        Valeur : {measure.value}
-                                    </Panel>
-                                })}
-                            </Accordion>
+                            <Row>
+                                <Panel collapsible header="Measures">
+                                    <Row>
+                                        <Col md={2}>
+                                            <h5>Début</h5>
+                                        </Col>
+                                        <Col md={10}>
+                                            <DateTimePicker id="start" getValue={(value) => {this.setState({beginDate:new Date(value)}); this.getInfos()}}/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col md={2}>
+                                            <h5>Fin</h5>
+                                        </Col>
+                                        <Col md={10}>
+                                            <DateTimePicker id="end" getValue={(value) => {this.setState({endDate:new Date(value)}); this.getInfos()}} />
+                                        </Col>
+                                    </Row>
+                                    <ListGroup fill>
+                                        {measures.map((measure) => {
+                                            return <ListGroupItem header={new Date(Date.parse(measure.date)).toLocaleString()}
+                                                                  key={measure._id}>
+                                                Valeur : {measure.value}
+                                            </ListGroupItem>
+                                        })}
+                                    </ListGroup>
+
+                                </Panel>
+                            </Row>
                         </Panel>
                     </Col>
                 </Row>
